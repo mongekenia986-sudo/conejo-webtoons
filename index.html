@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conejo Webtoons - Tiempo Real</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Round" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --accent-solid: #ff5e62;
+            --gradient-accent: linear-gradient(135deg, #ff5e62, #ff9966);
+            --gradient-robot: linear-gradient(135deg, #ff758c, #ff7eb3);
+            --canvas-green: #00d564;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f7f7f9;
+            --text-main: #222222;
+            --text-muted: #777777;
+            --border-color: #eaeaea;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Nunito', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #121212;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text-main);
+        }
+
+        .phone-container {
+            width: 100%;
+            max-width: 420px;
+            height: 100vh;
+            background-color: var(--bg-primary);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header {
+            height: 60px;
+            background-color: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .header-logo {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .switch-18 {
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background-color: var(--bg-secondary);
+            color: var(--text-muted);
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .switch-18.active {
+            background-color: #ff3b30;
+            color: #ffffff;
+            border-color: #ff3b30;
+        }
+
+        .header-actions .icon {
+            font-size: 24px;
+            color: var(--text-main);
+            cursor: pointer;
+        }
+
+        .view {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .active-view {
+            display: flex;
+        }
+        /* ==================== INICIO (HOME) ==================== */
+        .promo-banner {
+            margin: 16px;
+            height: 180px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            border: 1px dashed #ccc;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .promo-banner .banner-icon {
+            font-size: 3rem;
+            margin-bottom: 8px;
+            color: #b0b0b0;
+        }
+
+        .quick-actions {
+            display: flex;
+            justify-content: space-around;
+            padding: 0 20px 20px 20px;
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+        }
+
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .action-btn .btn-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--bg-secondary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-muted);
+        }
+
+        /* ==================== BIBLIOTECA ==================== */
+        .library-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--bg-primary);
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            flex-shrink: 0;
+        }
+
+        .lib-tab {
+            flex: 1;
+            text-align: center;
+            padding: 14px 0;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+
+        .lib-tab.active-tab {
+            color: var(--accent-solid);
+            border-bottom: 2px solid var(--accent-solid);
+        }
+
+        .library-search-container {
+            padding: 12px 16px;
+            background-color: var(--bg-primary);
+            flex-shrink: 0;
+        }
+
+        .lib-search-box {
+            display: flex;
+            align-items: center;
+            background-color: var(--bg-secondary);
+            border-radius: 24px;
+            padding: 8px 16px;
+            gap: 8px;
+        }
+
+        .lib-search-box input {
+            border: none;
+            background: none;
+            outline: none;
+            width: 100%;
+            font-size: 0.9rem;
+            color: var(--text-main);
+        }
+
+        .works-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            padding: 16px;
+        }
+
+        .work-card {
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .work-cover-container {
+            width: 100%;
+            aspect-ratio: 3 / 4;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: #f1f1f1;
+            position: relative;
+        }
+
+        .work-cover {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .work-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-top: 6px;
+            line-height: 1.2;
+            height: 32px;
+            overflow: hidden;
+        }
+
+        .work-tags {
+            font-size: 0.65rem;
+            color: var(--accent-solid);
+            font-weight: bold;
+        }
+
+        /* ==================== NUEVO CHAT (TIEMPO REAL) ==================== */
+        .chat-view {
+            background-color: #fafafa;
+        }
+
+        .asistente-header-card {
+            background: var(--gradient-robot);
+            margin: 16px;
+            padding: 20px;
+            border-radius: 16px;
+            color: #ffffff;
+            text-align: center;
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px rgba(255, 117, 140, 0.25);
+        }
+
+        .asistente-header-card h3 {
+            font-size: 1.15rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .asistente-suggestions-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .asistente-btn-chip {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            color: #ffffff;
+            padding: 10px 14px;
+            border-radius: 24px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .asistente-btn-chip:active {
+            transform: scale(0.97);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message-bubble {
+            max-width: 75%;
+            padding: 10px 14px;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .msg-bot {
+            background-color: #e9e9eb;
+            color: var(--text-main);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .msg-me {
+            background: var(--gradient-accent);
+            color: #ffffff;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .msg-username {
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-bottom: 2px;
+            opacity: 0.8;
+        }
+
+        .chat-input-area {
+            background-color: var(--bg-primary);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-top: 1px solid var(--border-color);
+            flex-shrink: 0;
+        }
+
+        .chat-input {
+            flex: 1;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 10px 16px;
+            border-radius: 24px;
+            outline: none;
+            font-size: 0.9rem;
+        }
+
+        .send-btn {
+            background: var(--gradient-accent);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+            cursor: pointer;
+        }
+        /* ==================== PERFIL Y SESIÓN REAL ==================== */
+        .login-view {
+            background: var(--gradient-accent);
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+        }
+
+        .login-card {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 340px;
+            border-radius: 24px;
+            padding: 32px 24px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--gradient-accent);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .profile-info-section {
+            padding: 24px 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .avatar-image {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-solid);
+        }
+
+        .menu-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* ==================== PANEL CANVAS DE CREADOR ==================== */
+        .creator-view {
+            background-color: #f5f6f8;
+        }
+
+        .creator-header {
+            background-color: var(--bg-primary);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .creator-title {
+            font-weight: 800;
+            color: var(--canvas-green);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-create-series {
+            background-color: var(--canvas-green);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            margin: 16px 0;
+        }
+
+        .form-section {
+            background: white;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #dcdcdc;
+            border-radius: 6px;
+        }
+
+        /* BARRA INFERIOR */
+        nav.bottom-nav {
+            background-color: var(--bg-primary);
+            border-top: 1px solid var(--border-color);
+            height: 64px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-muted);
+            cursor: pointer;
+            width: 33%;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+
+        .nav-item.active {
+            color: var(--accent-solid);
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <header id="global-header">
+            <div class="header-logo" onclick="switchTab('home')">
+                <span>🐰</span> Conejo Webtoons
+            </div>
+            <div class="header-actions">
+                <span class="switch-18" id="switch18" onclick="toggle18()">18+</span>
+                <span class="material-icons-round icon" id="header-user-btn" onclick="openLoginOrProfile()">person_outline</span>
+            </div>
+        </header>
+
+        <div class="view active-view" id="view-home">
+            <div class="promo-banner">
+                <span class="material-icons-round banner-icon">auto_stories</span>
+                <h3>Semana de Lanzamientos</h3>
+                <p>¡Los nuevos webtoons se sincronizan en tiempo real!</p>
+            </div>
+
+            <div class="quick-actions">
+                <button class="action-btn" onclick="goToCanvasPanel()">
+                    <div class="btn-icon" style="color: var(--canvas-green);"><span class="material-icons-round">dashboard</span></div>
+                    <span>Mi Panel</span>
+                </button>
+            </div>
+
+            <div class="library-search-container">
+                <h3 style="font-size: 1rem; margin-bottom: 10px;">Explorar Historias</h3>
+                <div class="lib-search-box">
+                    <span class="material-icons-round" style="color: var(--text-muted);">search</span>
+                    <input type="text" id="home-search" oninput="filterHomeCatalog()" placeholder="Buscar por título...">
+                </div>
+            </div>
+
+            <div class="works-grid" id="home-catalog-grid"></div>
+        </div>
+
+        <div class="view chat-view" id="view-chat">
+            <div class="asistente-header-card">
+                <h3><span>🐰</span> Chat Global en Vivo</h3>
+                <p>Habla en tiempo real con otros creadores</p>
+                <div class="asistente-suggestions-container">
+                    <button class="asistente-btn-chip" onclick="sendSuggestion('¡Hola a todos! 🌸')">¡Hola a todos! 🌸</button>
+                    <button class="asistente-btn-chip" onclick="sendSuggestion('¿Alguien activo para leer Manhwas? 📖')">¿Alguien activo para leer Manhwas? 📖</button>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chat-messages"></div>
+
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="chat-input" placeholder="Escribe un mensaje global...">
+                <button class="send-btn" onclick="sendMessage()"><span class="material-icons-round">send</span></button>
+            </div>
+        </div>
+
+        <div class="view" id="view-library">
+            <div class="library-tabs">
+                <div class="lib-tab active-tab" onclick="switchLibrarySubTab('bought')">Leídos</div>
+            </div>
+            <div class="works-grid" id="works-grid"></div>
+        </div>
+
+        <div class="view login-view" id="view-login">
+            <div class="login-card">
+                <h2>Iniciar Sesión Real</h2>
+                <p style="font-size: 0.8rem; margin: 10px 0 20px; color: var(--text-muted);">Ingresa con tu correo de Google</p>
+                <div class="form-group">
+                    <input type="email" id="login-email" class="form-input" placeholder="tu-correo@gmail.com" value="mongekenia5@gmail.com">
+                </div>
+                <button class="btn-submit" onclick="performLogin()">Ingresar con mi cuenta</button>
+            </div>
+        </div>
+
+        <div class="view profile-view" id="view-profile">
+            <section class="profile-info-section">
+                <img id="profile-pic" class="avatar-image" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150" alt="Avatar">
+                <div class="user-info">
+                    <span class="user-name" id="profile-display-name">Invitado</span>
+                    <p id="profile-email-lbl" style="font-size: 0.75rem; color: var(--text-muted);">Sesión no iniciada</p>
+                </div>
+            </section>
+
+            <nav class="menu-list">
+                <a href="#" class="menu-item" onclick="goToCanvasPanel()">
+                    <span>PANEL DE CONTROL (Canvas)</span>
+                    <span class="material-icons-round">chevron_right</span>
+                </a>
+                <a href="#" class="menu-item" id="logout-btn" onclick="logout()" style="color: #ff3b30; display:none;">
+                    <span>Cerrar Sesión</span>
+                    <span class="material-icons-round">logout</span>
+                </a>
+            </nav>
+        </div>
+
+        <div class="view creator-view" id="view-creator-panel">
+            <div class="creator-header">
+                <span class="creator-title">DASHBOARD</span>
+            </div>
+            <div style="padding: 16px;">
+                <button class="btn-create-series" onclick="openCreationForm()">+ Crear Serie</button>
+                <div class="works-grid" id="creator-works-grid" style="padding:0;"></div>
+            </div>
+        </div>
+
+        <div class="view creation-form-view" id="view-creation-form">
+            <div class="form-section">
+                <div class="form-group">
+                    <label>Título del Manhwa</label>
+                    <input type="text" id="form-title" class="form-input" placeholder="Ej. En la Guarida del Zorro">
+                </div>
+                <div class="form-group">
+                    <label>Resumen / Sinopsis</label>
+                    <textarea id="form-summary" class="form-textarea" rows="4" placeholder="De qué trata tu historia..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Categorías</label>
+                    <input type="text" id="form-category1" class="form-input" placeholder="#BL, #Manhwa, #Romance">
+                </div>
+                <div class="form-group">
+                    <label>URL de Imagen de Portada</label>
+                    <input type="text" id="form-cover-url" class="form-input" placeholder="Pega el enlace de tu dibujo o portada">
+                </div>
+                <button class="btn-submit" onclick="publishSeries()">Subir a Google Firestore</button>
+                <button class="btn-submit" style="background:#ccc; margin-top:10px;" onclick="cancelCreation()">Cancelar</button>
+            </div>
+        </div>
+
+        <nav class="bottom-nav">
+            <div class="nav-item active" id="nav-home" onclick="switchTab('home')">
+                <span class="material-icons-round">home</span>
+                <span>Inicio</span>
+            </div>
+            <div class="nav-item" id="nav-chat" onclick="switchTab('chat')">
+                <span class="material-icons-round">forum</span>
+                <span>Soporte</span>
+            </div>
+            <div class="nav-item" id="nav-library" onclick="switchTab('library')">
+                <span class="material-icons-round">auto_stories</span>
+                <span>Biblioteca</span>
+            </div>
+        </nav>
+    </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js";
+
+        // ==========================================
+        // Tus Claves Reales de Google Firebase
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyBRAe666gUifJkcZEWRhp6ZlnsJPwjwM04",
+            authDomain: "conejo-webtoons.firebaseapp.com",
+            projectId: "conejo-webtoons",
+            storageBucket: "conejo-webtoons.firebasestorage.app",
+            messagingSenderId: "339892352406",
+            appId: "1:339892352406:web:8902beffc82f46726659b7",
+            measurementId: "G-01CL8XKDMY"
+        };
+
+        // Inicializar Firebase y la Base de Datos Firestore
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Variables de Usuario (Comienza como Invitado, sin Suzuki)
+        let isLoggedIn = false;
+        let currentUser = {
+            username: "Invitado",
+            email: "",
+            avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150"
+        };
+        let isOver18 = false;
+
+        // --- NAVEGACIÓN ---
+        window.switchTab = function(tabId) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.getElementById(`view-${tabId}`).classList.add('active-view');
+            const navBtn = document.getElementById(`nav-${tabId}`);
+            if (navBtn) navBtn.classList.add('active');
+        };
+
+        window.openLoginOrProfile = function() {
+            if (isLoggedIn) {
+                switchTab('profile');
+            } else {
+                switchTab('login');
+            }
+        };
+
+        // --- INICIAR SESIÓN REAL (Tu cuenta de Google) ---
+        window.performLogin = function() {
+            const emailInput = document.getElementById('login-email').value.trim();
+            if(!emailInput) return alert("Ingresa un correo");
+
+            isLoggedIn = true;
+            currentUser.email = emailInput;
+            currentUser.username = emailInput.split('@')[0]; // Toma 'mongekenia5' de tu correo
+            
+            // Actualizar interfaz del perfil con tu cuenta real
+            document.getElementById('profile-display-name').innerText = currentUser.username;
+            document.getElementById('profile-email-lbl').innerText = currentUser.email;
+            document.getElementById('logout-btn').style.display = 'flex';
+            
+            alert(`¡Sesión iniciada como ${currentUser.username}!`);
+            switchTab('home');
+        };
+
+        // --- CERRAR SESIÓN ---
+        window.logout = function() {
+            isLoggedIn = false;
+            currentUser = {
+                username: "Invitado",
+                email: "",
+                avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150"
+            };
+            document.getElementById('profile-display-name').innerText = "Invitado";
+            document.getElementById('profile-email-lbl').innerText = "Sesión no iniciada";
+            document.getElementById('logout-btn').style.display = 'none';
+            alert("Sesión cerrada.");
+            switchTab('home');
+        };
+
+        // --- PANEL DE CREACIÓN ---
+        window.goToCanvasPanel = function() {
+            if(!isLoggedIn) {
+                alert("Debes iniciar sesión con tu cuenta para acceder.");
+                switchTab('login');
+                return;
+            }
+            switchTab('creator-panel');
+        };
+
+        window.openCreationForm = function() { switchTab('creation-form'); };
+        window.cancelCreation = function() { switchTab('creator-panel'); };
+
+        // --- PUBLICAR MANHWA EN GOOGLE FIRESTORE EN TIEMPO REAL ---
+        window.publishSeries = async function() {
+            const title = document.getElementById('form-title').value.trim();
+            const summary = document.getElementById('form-summary').value.trim();
+            const tags = document.getElementById('form-category1').value.trim();
+            const cover = document.getElementById('form-cover-url').value.trim() || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400";
+
+            if(!title || !summary) return alert("Completa el título y resumen");
+
+            try {
+                // Sube el documento directamente a la nube de Google
+                await addDoc(collection(db, "manhwas"), {
+                    title: title,
+                    summary: summary,
+                    tags: tags.split(',').map(t => t.trim()),
+                    cover: cover,
+                    author: currentUser.username,
+                    createdAt: Date.now()
+                });
+                alert("¡Tu Manhwa se ha publicado en vivo en Google Firestore! 🦊✨");
+                document.getElementById('form-title').value = "";
+                document.getElementById('form-summary').value = "";
+                document.getElementById('form-category1').value = "";
+                document.getElementById('form-cover-url').value = "";
+                switchTab('creator-panel');
+            } catch (error) {
+                console.error("Error al publicar:", error);
+                alert("Hubo un error al guardar. Asegúrate de haber configurado tu base de datos de Firestore en modo de prueba.");
+            }
+        };
+
+        // --- ESCUCHAR MANHWAS EN TIEMPO REAL (FIRESTORE) ---
+        onSnapshot(collection(db, "manhwas"), (snapshot) => {
+            const manhwas = [];
+            snapshot.forEach(doc => {
+                manhwas.push(doc.data());
+            });
+            renderCatalog(manhwas);
+        });
+
+        function renderCatalog(items) {
+            const homeGrid = document.getElementById('home-catalog-grid');
+            const creatorGrid = document.getElementById('creator-works-grid');
+            homeGrid.innerHTML = "";
+            creatorGrid.innerHTML = "";
+
+            items.forEach(item => {
+                const cardHtml = `
+                    <div class="work-card">
+                        <div class="work-cover-container">
+                            <img class="work-cover" src="${item.cover}" alt="Portada">
+                        </div>
+                        <div class="work-title">${item.title}</div>
+                        <div class="work-tags">${item.tags.join(' ')}</div>
+                    </div>
+                `;
+                homeGrid.innerHTML += cardHtml;
+                if(item.author === currentUser.username) {
+                    creatorGrid.innerHTML += cardHtml;
+                }
+            });
+        }
+
+        // --- ENVIAR Y RECIBIR MENSAJES DEL CHAT EN TIEMPO REAL ---
+        window.sendMessage = async function() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if(!text) return;
+
+            await addDoc(collection(db, "mensajes"), {
+                sender: currentUser.username,
+                text: text,
+                createdAt: Date.now()
+            });
+            input.value = "";
+        };
+
+        window.sendSuggestion = async function(text) {
+            await addDoc(collection(db, "mensajes"), {
+                sender: currentUser.username,
+                text: text,
+                createdAt: Date.now()
+            });
+        };
+
+        // Escucha en tiempo real de los chats globales
+        const qChats = query(collection(db, "mensajes"), orderBy("createdAt", "asc"));
+        onSnapshot(qChats, (snapshot) => {
+            const chatMessages = document.getElementById('chat-messages');
+            chatMessages.innerHTML = "";
+            snapshot.forEach(doc => {
+                const msg = doc.data();
+                const cssClass = (msg.sender === currentUser.username) ? 'msg-me' : 'msg-bot';
+                chatMessages.innerHTML += `
+                    <div class="message-bubble ${cssClass}">
+                        <div class="msg-username">${msg.sender}</div>
+                        <div>${msg.text}</div>
+                    </div>
+                `;
+            });
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        });
+    </script>
+</body>
+</html>
